@@ -1,1 +1,116 @@
-fundo.png
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Globo do Amor</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(#222, #000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  canvas {
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 0, 80, 0.5);
+    background: transparent;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="globo" width="360" height="360"></canvas>
+
+<script>
+const canvas = document.getElementById("globo");
+const ctx = canvas.getContext("2d");
+
+const GRAVIDADE = 0.15;
+const ATRITO = 0.98;
+const CHAO = canvas.height - 20;
+
+const fundo = new Image();
+fundo.src = "img/fundo.png"; // <-- sua imagem aqui
+
+const simbolos = ["LOVE", "♥"];
+
+const particulas = [];
+
+class Particula {
+  constructor() {
+    this.texto = simbolos[Math.floor(Math.random() * simbolos.length)];
+    this.x = Math.random() * canvas.width;
+    this.y = CHAO;
+    this.vx = 0;
+    this.vy = 0;
+    this.size = 14 + Math.random() * 6;
+  }
+
+  update() {
+    this.vy += GRAVIDADE;
+    this.vx *= ATRITO;
+
+    this.x += this.vx;
+    this.y += this.vy;
+
+    // Colisão com chão
+    if (this.y > CHAO) {
+      this.y = CHAO;
+      this.vy *= -0.2;
+    }
+
+    // Limites laterais do globo
+    if (this.x < 20 || this.x > canvas.width - 20) {
+      this.vx *= -0.5;
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = "#ff4d6d";
+    ctx.font = `${this.size}px Arial`;
+    ctx.fillText(this.texto, this.x, this.y);
+  }
+}
+
+// Criar letras iniciais
+for (let i = 0; i < 60; i++) {
+  particulas.push(new Particula());
+}
+
+// Sacudir o globo
+canvas.addEventListener("click", () => {
+  particulas.forEach(p => {
+    p.vx = (Math.random() - 0.5) * 6;
+    p.vy = -Math.random() * 8 - 2;
+  });
+});
+
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Fundo
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(180, 180, 180, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.drawImage(fundo, 0, 0, canvas.width, canvas.height);
+  ctx.restore();
+
+  // Partículas
+  particulas.forEach(p => {
+    p.update();
+    p.draw();
+  });
+
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+
+</body>
+</html>
