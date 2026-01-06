@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Globo do Amor</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(#222, #000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Globo */
+    .globo {
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle at top, #ffffff44, #ffffff11);
+      border: 4px solid rgba(255,255,255,0.6);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(255, 0, 80, 0.4);
+      animation: balanco 6s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    /* Partículas */
+    .particula {
+      position: absolute;
+      top: -30px;
+      font-size: 18px;
+      color: #ff4d6d;
+      animation: cair linear infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes cair {
+      to {
+        transform: translateY(360px);
+        opacity: 0;
+      }
+    }
+
+    /* Balanço do globo */
+    @keyframes balanco {
+      0%   { transform: rotate(0deg); }
+      25%  { transform: rotate(3deg); }
+      50%  { transform: rotate(0deg); }
+      75%  { transform: rotate(-3deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Balanço forte ao clicar */
+    .shake {
+      animation: shake 0.8s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%   { transform: rotate(0deg); }
+      15%  { transform: rotate(8deg); }
+      30%  { transform: rotate(-8deg); }
+      45%  { transform: rotate(6deg); }
+      60%  { transform: rotate(-6deg); }
+      75%  { transform: rotate(4deg); }
+      100% { transform: rotate(0deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="globo" id="globo"></div>
+
+  <script>
+    const globo = document.getElementById("globo");
+    const simbolos = ["LOVE", "♥", "LOVE", "♥"];
+
+    function criarParticula() {
+      const p = document.createElement("div");
+      p.classList.add("particula");
+
+      p.textContent = simbolos[Math.floor(Math.random() * simbolos.length)];
+
+      p.style.left = Math.random() * 280 + "px";
+      p.style.fontSize = (14 + Math.random() * 10) + "px";
+      p.style.animationDuration = (3 + Math.random() * 3) + "s";
+
+      globo.appendChild(p);
+
+      setTimeout(() => p.remove(), 6000);
+    }
+
+    setInterval(criarParticula, 280);
+
+    // Chacoalhar ao clicar
+    globo.addEventListener("click", () => {
+      globo.classList.remove("shake");
+      void globo.offsetWidth; // força reflow
+      globo.classList.add("shake");
+    });
+  </script>
+
+</body>
+</html>
